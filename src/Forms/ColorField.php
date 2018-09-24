@@ -120,11 +120,8 @@ class ColorField extends FormField
      */
     public function Field($properties = [])
     {
-        // Requirements::javascript(FRAMEWORK_DIR.'/thirdparty/jquery/jquery.js');
-        // Requirements::javascript(FRAMEWORK_DIR.'/thirdparty/jquery-entwine/dist/jquery.entwine-dist.js');
-
-        // Requirements::javascript('colymba/colorfield:client/dist/js/bundle.js');
-        // Requirements::css('colymba/colorfield:client/dist/styles/bundle.css');
+        Requirements::javascript('silverstripe/admin:thirdparty/jquery/jquery.js');
+        Requirements::javascript('silverstripe/admin:thirdparty/jquery-entwine/dist/jquery.entwine-dist.js');
 
         Requirements::javascript('colymba/colorfield:client/dist/js/vendor/jquery-minicolors/jquery.minicolors.js');
         Requirements::css('colymba/colorfield:client/dist/js/vendor/jquery-minicolors/jquery.minicolors.css');
