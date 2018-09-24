@@ -1,167 +1,159 @@
 (function($) {
-  $.entwine('ss', function($) {
-    $.entwine('colymba', function($) {
+    $.entwine('ss', function($) {
+        $.entwine('colymba', function($) {
 
+            $('.colorField').entwine({
+                onmatch: function() {
+                    this.sync();
+                },
+                onunmatch: function() {},
+                sync: function() {
+                    var $parent = this.closest('.field.color'),
+                        $proxy = $parent.find('.colorFieldProxy'),
+                        hex = $proxy.val().replace('#', ''),
+                        alpha = parseFloat($proxy.attr('data-opacity')) * 100;
 
-      $('.colorField').entwine({
-        onmatch: function(){
-          this.sync();
-        },
-        onunmatch: function(){},
-        sync: function()
-        {
-          var $parent = this.closest('.field.color'),
-              $proxy  = $parent.find('.colorFieldProxy'),
-              hex     = $proxy.val().replace('#', ''),
-              alpha   = parseFloat($proxy.attr('data-opacity')) * 100;
+                    alpha = ('000' + alpha).slice(-3);
+                    this.val(hex + alpha).attr('value', hex + alpha);
+                }
+            });
 
-          alpha = ('000' + alpha).slice(-3);
-          this.val(hex + alpha).attr('value', hex + alpha);
-        }
-      });
+            $('.colorFieldProxy').entwine({
+                onmatch: function() {
+                    var $parent = this.closest('.field.color'),
+                        $field = $parent.find('.colorField'),
+                        config = $field.data('config') ? $field.data('config') : {};
 
+                    config.change = function(hex, opacity) {
+                        var $proxy = $(this),
+                            $parent = $proxy.closest('.field.color'),
+                            $field = $parent.find('.colorField'),
+                            $color = $parent.find('.colorFieldPreview .color'),
+                            $hex = $parent.find('.colorFieldControls .hex'),
+                            $red = $parent.find('.colorFieldControls .r'),
+                            $green = $parent.find('.colorFieldControls .g'),
+                            $blue = $parent.find('.colorFieldControls .b'),
+                            $alpha = $parent.find('.colorFieldControls .alpha'),
+                            rgba = $proxy.minicolors('rgbObject');
 
-      $('.colorFieldProxy').entwine({
-        onmatch: function(){
-          var $parent = this.closest('.field.color'),
-              $field  = $parent.find('.colorField'),
-              config  = $field.data('config') ? $field.data('config') : {};
+                        $color.css({
+                            backgroundColor: hex,
+                            opacity: rgba.a
+                        });
 
+                        $hex.val(hex.replace('#', ''));
+                        $alpha.val(rgba.a);
 
-          config.change = function(hex, opacity) {
-            var $proxy  = $(this),
-                $parent = $proxy.closest('.field.color'),
-                $field  = $parent.find('.colorField'),
-                $color  = $parent.find('.colorFieldPreview .color'),
-                $hex    = $parent.find('.colorFieldControls .hex'),
-                $red    = $parent.find('.colorFieldControls .r'),
-                $green  = $parent.find('.colorFieldControls .g'),
-                $blue   = $parent.find('.colorFieldControls .b'),
-                $alpha  = $parent.find('.colorFieldControls .alpha'),
-                rgba    = $proxy.minicolors('rgbObject');
+                        $red.val(rgba.r);
+                        $green.val(rgba.g);
+                        $blue.val(rgba.b);
 
-              $color.css({
-                backgroundColor: hex,
-                opacity: rgba.a
-              });
+                        $field.sync();
+                    };
 
-              $hex.val(hex.replace('#', ''));
-              $alpha.val(rgba.a);
+                    this.minicolors(config);
+                },
+                onunmatch: function() {}
+            });
 
-              $red.val(rgba.r);
-              $green.val(rgba.g);
-              $blue.val(rgba.b);
+            $('.colorFieldControls .hex input, .colorFieldControls .rgb input, .colorFieldControls .alpha input').entwine({
+                onmatch: function() {},
+                onunmatch: function() {},
 
-              $field.sync();
-          };
+                onchange: function(e) {
+                    this.updateProxy(e);
+                },
+                onkeyup: function(e) {
+                    this.updateProxy(e);
+                },
+                onfocusout: function(e) {
+                    this.updateProxy(e);
+                },
+                updateProxy: function(e) {
+                    var $parent = this.closest('.field.color'),
+                        $proxy = $parent.find('.colorFieldProxy'),
+                        $r = $parent.find('.colorFieldControls .r'),
+                        $g = $parent.find('.colorFieldControls .g'),
+                        $b = $parent.find('.colorFieldControls .b'),
+                        type = this.attr('name').split('_').pop(),
+                        rgbRegEx = new RegExp('[^0-9]', 'i'),
+                        hexKeys = "0123456789abcdefABCDEF",
+                        rgbKeys = "0123456789",
+                        alphaKeys = "0123456789",
+                        r, g, b, a;
 
-          this.minicolors(config);
-        },
-        onunmatch: function(){}
-      });
+                    switch (type) {
+                        case 'red':
+                        case 'green':
+                        case 'blue':
+                            if (e.type === "keyup" && rgbKeys.indexOf(e.key) === -1) {
+                                return;
+                            }
 
+                            r = $r.val().replace(rgbRegEx, '');
+                            r = (!r) ? 0 : parseInt(r);
 
-      $('.colorFieldControls .hex input, .colorFieldControls .rgb input, .colorFieldControls .alpha input').entwine({
-        onmatch: function(){},
-        onunmatch: function(){},
+                            g = $g.val().replace(rgbRegEx, '');
+                            g = (!g) ? 0 : parseInt(g);
 
-        onchange: function(e){          
-          this.updateProxy(e);
-        },
-        onkeyup: function(e){
-          this.updateProxy(e);
-        },
-        onfocusout: function(e){
-          this.updateProxy(e);
-        },
+                            b = $b.val().replace(rgbRegEx, '');
+                            b = (!b) ? 0 : parseInt(b);
 
-        updateProxy: function(e){
-          var $parent  = this.closest('.field.color'),
-              $proxy   = $parent.find('.colorFieldProxy'),
-              $r       = $parent.find('.colorFieldControls .r'),
-              $g       = $parent.find('.colorFieldControls .g'),
-              $b       = $parent.find('.colorFieldControls .b'),
-              type     = this.attr('name').split('_').pop(),
-              rgbRegEx = new RegExp('[^0-9]', 'i'),
-              hexKeys  = "0123456789abcdefABCDEF",
-              rgbKeys  = "0123456789",
-              alphaKeys = "0123456789",
-              r, g, b, a;
+                            $r.val(r);
+                            $g.val(g);
+                            $b.val(b);
 
-          switch (type)
-          {
-            case 'red':
-            case 'green':
-            case 'blue':
-              if (e.type === "keyup" && rgbKeys.indexOf(e.key) === -1)
-              {
-                return;
-              }
+                            $proxy.minicolors('value', '#' +
+                                ('00' + r.toString(16)).slice(-2) +
+                                ('00' + g.toString(16)).slice(-2) +
+                                ('00' + b.toString(16)).slice(-2)
+                            );
+                            break;
 
-              r = $r.val().replace(rgbRegEx, '');
-              r = (!r) ? 0 : parseInt(r);
+                        case 'alpha':
+                            if (e.type === "keyup" && alphaKeys.indexOf(e.key) === -1) {
+                                return;
+                            }
 
-              g = $g.val().replace(rgbRegEx, '');
-              g = (!g) ? 0 : parseInt(g);
+                            a = this.val().replace(new RegExp('[^0-9.,]', 'i'), '');
+                            a = (!a) ? 1 : parseFloat(a);
 
-              b = $b.val().replace(rgbRegEx, '');
-              b = (!b) ? 0 : parseInt(b);
+                            if (a < 0) {
+                                a = 0;
+                            }
+                            if (a > 1) {
+                                a = 1;
+                            }
 
-              $r.val(r);
-              $g.val(g);
-              $b.val(b);
+                            this.val(a);
+                            $proxy.minicolors('opacity', a);
+                            break;
 
-              $proxy.minicolors('value', '#' +
-                ('00' + r.toString(16)).slice(-2) +
-                ('00' + g.toString(16)).slice(-2) +
-                ('00' + b.toString(16)).slice(-2)
-              );
-              break;
+                        case 'hex':
+                            if (e.type === "keyup" && hexKeys.indexOf(e.key) !== -1 && this.val().length === 6) {
+                                $proxy.minicolors('value', '#' + this.val());
+                            } else if (e.type === "change" || e.type === "focusout") {
+                                $proxy.minicolors('value', '#' + this.val());
+                            }
+                            break;
+                    }
+                }
+            });
 
-            case 'alpha':
-              if (e.type === "keyup" && alphaKeys.indexOf(e.key) === -1)
-              {
-                return;
-              }
+            $('.colorFieldControls .colorMode').entwine({
+                onmatch: function() {},
+                onunmatch: function() {},
 
-              a = this.val().replace(new RegExp('[^0-9.,]', 'i'), '');
-              a = (!a) ? 1 : parseFloat(a);
+                onchange: function(e) {
+                    var $parent = this.closest('.field.color'),
+                        $proxy = $parent.find('.colorFieldProxy');
 
-              if ( a < 0 ) { a = 0; }
-              if ( a > 1 ) { a = 1; }
+                    $proxy.minicolors('settings', {
+                        control: this.val()
+                    });
+                }
+            });
 
-              this.val(a);
-              $proxy.minicolors('opacity', a);
-              break;
-
-            case 'hex':
-              if (e.type === "keyup" && hexKeys.indexOf(e.key) !== -1 && this.val().length === 6)
-              {
-                $proxy.minicolors('value', '#' + this.val());
-              }
-              else if (e.type === "change" || e.type === "focusout")
-              {
-                $proxy.minicolors('value', '#' + this.val());
-              }
-              break;
-          }
-        }
-      });
-
-
-      $('.colorFieldControls .colorMode').entwine({
-        onmatch: function(){},
-        onunmatch: function(){},
-
-        onchange: function(e){
-          var $parent = this.closest('.field.color'),
-              $proxy  = $parent.find('.colorFieldProxy');
-
-          $proxy.minicolors('settings', {control: this.val()});
-        }
-      });
-
-
-    }); // colymba namespace
-  }); // ss namespace
+        }); // colymba namespace
+    }); // ss namespace
 }(jQuery));

@@ -1,0 +1,6 @@
+---
+Name: colorfieldtypes
+---
+SilverStripe\Core\Injector\Injector:
+  Color:
+    class: Colymba\ColorField\DBColor
