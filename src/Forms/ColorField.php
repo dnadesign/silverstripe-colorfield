@@ -123,8 +123,8 @@ class ColorField extends FormField
         Requirements::javascript('silverstripe/admin:thirdparty/jquery/jquery.js');
         Requirements::javascript('silverstripe/admin:thirdparty/jquery-entwine/dist/jquery.entwine-dist.js');
 
-        Requirements::javascript('public/resources/vendor/abeautifulsite/jquery-minicolors/jquery.minicolors.js');
-        Requirements::css('public/resources/vendor/abeautifulsite/jquery-minicolors/jquery.minicolors.css');
+        Requirements::javascript('colymba/colorfield:client/dist/thirdparty/jquery-minicolors/jquery.minicolors.js');
+        Requirements::css('colymba/colorfield:client/dist/thirdparty/jquery-minicolors/jquery.minicolors.css');
 
         Requirements::javascript('colymba/colorfield:client/dist/js/ColorField.js');
         Requirements::css('colymba/colorfield:client/dist/css/ColorField.css');

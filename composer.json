@@ -23,8 +23,7 @@
 			"dev-master": "2.0.x-dev"
 		},
 		"expose": [
-			"client/dist",
-			"vendor/abeautifulsite/jquery-minicolors"
+			"client/dist"
 		]
 	},
 	"minimum-stability": "dev",
