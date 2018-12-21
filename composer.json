@@ -24,7 +24,7 @@
 		},
 		"expose": [
 			"client/dist",
-			"vendor/abeautifulsite/jquery-minicolors"
+			"/vendor/abeautifulsite/jquery-minicolors"
 		]
 	},
 	"minimum-stability": "dev",
