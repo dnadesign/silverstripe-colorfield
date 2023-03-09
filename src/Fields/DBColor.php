@@ -202,10 +202,14 @@ class DBColor extends DBField
      *
      * @param string $hex Possible Hex value
      *
-     * @return string RRGGBB hex value
+     * @return string | false RRGGBB hex value
      */
     public static function format_hex($hex)
     {
+        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            return false;
+        }
+
         if (\strlen($hex) < 6) {
             $r = substr($hex, 0, 1);
             $g = substr($hex, 1, 1);
